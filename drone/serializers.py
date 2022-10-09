@@ -26,7 +26,7 @@ class DroneSerializer(serializers.ModelSerializer):
             'model':instance.get_model_display(),
             'state':instance.get_state_display(),
             'weight_limit':instance.weight_limit,
-            'battery_capacity':instance.battery_capacity,
+            'battery_level':instance.battery_level,
             'medications':serializer.data
         }
 
@@ -76,3 +76,21 @@ class DroneMedicationsItemsSerializer(serializers.ModelSerializer):
             'medications':serializer.data
         }
     
+class DroneBasicSerializer(serializers.ModelSerializer):
+    # medications = MediacationSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Drone
+        fields = ('serial_number', 'model','state','weight_limit', 'battery_level')
+
+    def to_representation(self, instance):
+        
+        return {
+            
+            'serial_number':instance.serial_number,
+            'model':instance.get_model_display(),
+            'state':instance.get_state_display(),
+            'weight_limit':instance.weight_limit,
+            'battery_level':instance.battery_level,
+            
+        }

@@ -4,7 +4,7 @@ from .models import Drone, Medication
 from rest_framework.viewsets import GenericViewSet 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, DroneMedicationsItemsSerializer
+from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, DroneMedicationsItemsSerializer, DroneBasicSerializer
 # Create your views here.
 
 
@@ -12,7 +12,7 @@ class DroneListAPIView(generics.ListAPIView):
     serializer_class = DroneSerializer
 
     def get_queryset(self):
-        return Drone.objects.all()
+        return self.get_serializer().Meta.model.objects.all()
 
 class DroneCreateAPIView(generics.CreateAPIView):
     serializer_class = DroneCreateSerializer
@@ -48,7 +48,7 @@ class LoadDroneAPIView(generics.UpdateAPIView):
         if cont > drone.weight_limit:
             return Response({'error':'The weight of all medications exceeds the weight limit of this drone.'}, status = status.HTTP_400_BAD_REQUEST)
         
-        if drone.battery_capacity < 25 :
+        if drone.battery_level < 25 :
             return Response({'error':'Ups... Drone with insufficient battery. It will be ready in a while.'}, status = status.HTTP_400_BAD_REQUEST)
 
         elif self.get_queryset(pk):
@@ -78,7 +78,7 @@ class LoadDroneAPIView(generics.UpdateAPIView):
             return Response({'error':'The weight of all medications exceeds the weight limit of this drone.'}, status = status.HTTP_400_BAD_REQUEST)
         
 
-        if drone.battery_capacity < 25 :
+        if drone.battery_level < 25 :
             return Response({'error':'Ups... Drone with insufficient battery. It will be ready in a while.'}, status = status.HTTP_400_BAD_REQUEST)
 
         elif self.get_queryset(pk):
@@ -104,3 +104,9 @@ class LoadedMedicationItems(generics.RetrieveAPIView):
             drone_serializer = self.serializer_class(self.get_queryset(pk))
             return Response(drone_serializer.data, status = status.HTTP_200_OK)
         return Response({'error':'This drone does not exist'}, status = status.HTTP_400_BAD_REQUEST)
+
+class DroneListAvailableAPIView(generics.ListAPIView):
+    serializer_class = DroneBasicSerializer
+
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.filter(battery_level__gte=25.0).filter(state = 1)

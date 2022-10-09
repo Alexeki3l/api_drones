@@ -14,7 +14,7 @@ def change_state(instance):
             
             instance.state ='4'
             div = cont/instance.weight_limit*10
-            instance.battery_capacity = instance.battery_capacity - div
+            instance.battery_level = instance.battery_level - div
             instance.save()
             time.sleep(15)
 
@@ -31,7 +31,7 @@ def change_state(instance):
         if str(n) == '6':
             print('RETURNING')
             instance.state ='6'
-            instance.battery_capacity -= 5.0
+            instance.battery_level -= 5.0
             instance.save()
             time.sleep(15)
             instance.state ='1'
@@ -43,9 +43,9 @@ def change_state(instance):
             instance.save()
             time.sleep(15)
             n+=1
-    if instance.battery_capacity <= 25:
+    if instance.battery_level <= 25:
         time.sleep(60)
-        instance.battery_capacity = 100
+        instance.battery_level = 100
         instance.save()
     
     

@@ -4,7 +4,7 @@ from django.utils.html import format_html
 from .models import Drone, Medication
 
 class DroneAdmin(admin.ModelAdmin):
-    list_display  = ('serial_number','model','Weight_Limit','state','Battery_Capacity','created','updated',)
+    list_display  = ('serial_number','model','Weight_Limit','state','Battery_Level','created','updated',)
     exclude = ('weight_limit',)
     search_fields = ['serial_number','model','Weight_Limit','state']
     readonly_fields  = ("Weight_Limit","created", "updated",)
@@ -12,8 +12,8 @@ class DroneAdmin(admin.ModelAdmin):
     def Weight_Limit(self, obj):
         return format_html('{} grams',obj.weight_limit)
 
-    def Battery_Capacity(self, obj):
-        return format_html('{} %',obj.battery_capacity)
+    def Battery_Level(self, obj):
+        return format_html('{} %',obj.battery_level)
 
 class MedicationAdmin(admin.ModelAdmin):
     list_display  = ('img','id','name','Weight','code',)

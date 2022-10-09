@@ -19,7 +19,7 @@ class Drone(models.Model):
     MODEL            = (('1', 'Lightweigth'), ('2', 'Middleweigth'), ('3', 'Cruiserweigth'),('4', 'Heavyweigth'),)
     model            = models.CharField( max_length = 1, choices=MODEL)
     weight_limit     = models.IntegerField(null=True, blank=True)
-    battery_capacity = models.FloatField(default=100)
+    battery_level = models.FloatField(default=100)
     STATE            = (('1', 'IDLE'),('2','LOADING'),('3','LOADED'),('4','DELIVERING'),('5','DELIVERED'),('6','RETURNING'),('6','RETURNING'),)
     state            = models.CharField(max_length = 1, choices=STATE)
     medications      = models.ManyToManyField(Medication, blank=True)
