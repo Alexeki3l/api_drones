@@ -25,6 +25,7 @@ def change_state(instance):
             print('delete')
             for medication in instance.medications.all():
                 instance.medications.remove(medication)
+                instance.save()
             time.sleep(5)
 
         if str(n) == '6':

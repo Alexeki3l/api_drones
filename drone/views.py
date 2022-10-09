@@ -37,7 +37,7 @@ class LoadDroneAPIView(generics.UpdateAPIView):
     def patch(self, request, pk=None):
         cont=0
         datas = str(request.data)[1:-2].split(":")
-        datas = datas[2].strip()
+        datas = datas[1].strip()
         
         for id in datas:
            if id.isdigit():
@@ -52,8 +52,12 @@ class LoadDroneAPIView(generics.UpdateAPIView):
             return Response({'error':'Ups... Drone with insufficient battery. It will be ready in a while.'}, status = status.HTTP_400_BAD_REQUEST)
 
         elif self.get_queryset(pk):
-            drone_serializer = self.serializer_class(self.get_queryset(pk))
-            return Response(drone_serializer.data, status = status.HTTP_200_OK)
+            drone_serializer = self.serializer_class(self.get_queryset(pk), data= request.data)
+
+            if drone_serializer.is_valid():
+                drone_serializer.save()
+                return Response(drone_serializer.data, status = status.HTTP_200_OK)
+            return Response(drone_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         return Response({'error':'This drone does not exist'}, status = status.HTTP_400_BAD_REQUEST)
 
 

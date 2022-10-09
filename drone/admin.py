@@ -16,7 +16,7 @@ class DroneAdmin(admin.ModelAdmin):
         return format_html('{} %',obj.battery_capacity)
 
 class MedicationAdmin(admin.ModelAdmin):
-    list_display  = ('img','name','Weight','code',)
+    list_display  = ('img','id','name','Weight','code',)
     search_fields = ['name','Weight','code']
 
     def img(self,obj):
