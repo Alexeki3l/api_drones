@@ -58,4 +58,21 @@ class DroneUpdateSerializer(serializers.ModelSerializer):
             # instance.save()
             t.start()
         return super().update(instance, validated_data)
+
+class DroneMedicationsItemsSerializer(serializers.ModelSerializer):
+    # medications = MediacationSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Drone
+        fields = ('serial_number', 'medications',)
+    
+    def to_representation(self, instance):
+        queryset = instance.medications.all()
+        serializer = MediacationSerializer(queryset, many=True)
+        
+        return {
+            'id':instance.id,
+            'serial_number':instance.serial_number,
+            'medications':serializer.data
+        }
     

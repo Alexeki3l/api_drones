@@ -4,7 +4,7 @@ from .models import Drone, Medication
 from rest_framework.viewsets import GenericViewSet 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer
+from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, DroneMedicationsItemsSerializer
 # Create your views here.
 
 
@@ -35,7 +35,23 @@ class LoadDroneAPIView(generics.UpdateAPIView):
 
 
     def patch(self, request, pk=None):
-        if self.get_queryset(pk):
+        cont=0
+        datas = str(request.data)[1:-2].split(":")
+        datas = datas[2].strip()
+        
+        for id in datas:
+           if id.isdigit():
+            medication = Medication.objects.get(id = int(id))
+            cont+=medication.weight
+        drone = Drone.objects.get(id = pk)
+        
+        if cont > drone.weight_limit:
+            return Response({'error':'The weight of all medications exceeds the weight limit of this drone.'}, status = status.HTTP_400_BAD_REQUEST)
+        
+        if drone.battery_capacity < 25 :
+            return Response({'error':'Ups... Drone with insufficient battery. It will be ready in a while.'}, status = status.HTTP_400_BAD_REQUEST)
+
+        elif self.get_queryset(pk):
             drone_serializer = self.serializer_class(self.get_queryset(pk))
             return Response(drone_serializer.data, status = status.HTTP_200_OK)
         return Response({'error':'This drone does not exist'}, status = status.HTTP_400_BAD_REQUEST)
@@ -70,5 +86,17 @@ class LoadDroneAPIView(generics.UpdateAPIView):
             return Response(drone_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         return Response({'error':'This drone does not exist'}, status = status.HTTP_400_BAD_REQUEST)
         
-    
+class LoadedMedicationItems(generics.RetrieveAPIView):
+    serializer_class = DroneMedicationsItemsSerializer
 
+    def get_queryset(self,pk):
+        return self.get_serializer().Meta.model.objects.filter(id = pk).first()
+            
+    def get(self, request, pk=None):
+        if self.get_queryset(pk).medications.count() == 0:
+            return Response({'message':'This Drone does not have any medical items.'}, status = status.HTTP_200_OK)
+
+        elif self.get_queryset(pk):
+            drone_serializer = self.serializer_class(self.get_queryset(pk))
+            return Response(drone_serializer.data, status = status.HTTP_200_OK)
+        return Response({'error':'This drone does not exist'}, status = status.HTTP_400_BAD_REQUEST)
