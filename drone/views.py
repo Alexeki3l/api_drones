@@ -4,7 +4,7 @@ from .models import Drone, Medication
 from rest_framework.viewsets import GenericViewSet 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, DroneMedicationsItemsSerializer, DroneBasicSerializer
+from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, DroneMedicationsItemsSerializer, DroneBasicSerializer, DroneBatterySerializer
 # Create your views here.
 
 
@@ -110,3 +110,9 @@ class DroneListAvailableAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.filter(battery_level__gte=25.0).filter(state = 1)
+
+class CheckBaterryAPIView(generics.RetrieveAPIView):
+    serializer_class = DroneBatterySerializer
+
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.all()

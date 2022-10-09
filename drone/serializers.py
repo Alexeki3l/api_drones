@@ -94,3 +94,15 @@ class DroneBasicSerializer(serializers.ModelSerializer):
             'battery_level':instance.battery_level,
             
         }
+
+class DroneBatterySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Drone
+        fields = ('battery_level',)
+
+    def to_representation(self, instance):
+        
+        return {
+            'serial_number':instance.serial_number,
+            'battery_level':instance.battery_level,
+        }
