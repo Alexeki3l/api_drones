@@ -1,5 +1,5 @@
 from rest_framework import serializers,status
-from .models import Drone, Medication
+from .models import Drone, Medication, DroneHistory
 from .utils import change_state
 import threading
 
@@ -109,3 +109,19 @@ class DroneBatterySerializer(serializers.ModelSerializer):
             'serial_number':instance.serial_number,
             'battery_level':instance.battery_level,
         }
+
+class DroneHistorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = DroneHistory
+        fields = ('drones', 'state', 'battery_level', 'created',)
+
+    def to_representation(self, instance):
+        
+        return {
+            'drones':instance.drones.serial_number,
+            'state':instance.state,
+            'battery_level':instance.battery_level,
+            'created':instance.created
+        }
+        

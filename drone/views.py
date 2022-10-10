@@ -6,7 +6,8 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework import generics, status
 from rest_framework.response import Response
 from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, \
-    DroneMedicationsItemsSerializer, DroneBasicSerializer, DroneBatterySerializer, MediacationSerializer
+    DroneMedicationsItemsSerializer, DroneBasicSerializer, DroneBatterySerializer, MediacationSerializer\
+    ,DroneHistorySerializer    
 # Create your views here.
 
 
@@ -147,3 +148,15 @@ class MedicationCreateAPIView(generics.CreateAPIView):
             serializer.save()
             return Response({'message':'Medication successfully created'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MedicationListAPIView(generics.ListAPIView):
+    serializer_class=MediacationSerializer
+
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.all()
+
+class DroneHistoryListAPIView(generics.ListAPIView):
+    serializer_class=DroneHistorySerializer
+
+    def get_queryset(self):
+        return self.get_serializer().Meta.model.objects.all()
