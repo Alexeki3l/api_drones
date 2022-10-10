@@ -6,7 +6,7 @@ class Medication(models.Model):
     name    = models.CharField(max_length=255) # (allowed only letters, numbers, ‘-‘, ‘_’)
     weight  = models.IntegerField()  #  weight < 500 g
     code    = models.CharField(max_length=255)
-    image   = models.ImageField(upload_to='medication')  #  (allowed only upper case letters, underscore and numbers);
+    image   = models.ImageField(upload_to='medication', blank=True)  #  (allowed only upper case letters, underscore and numbers);
 
     class Meta:
         verbose_name = 'Medication'
@@ -22,7 +22,7 @@ class Drone(models.Model):
     weight_limit     = models.IntegerField(null=True, blank=True)
     battery_level    = models.FloatField(default=100)
     STATE            = (('1', 'IDLE'),('2','LOADING'),('3','LOADED'),('4','DELIVERING'),('5','DELIVERED'),('6','RETURNING'),('6','RETURNING'),)
-    state            = models.CharField(max_length = 1, choices=STATE)
+    state            = models.CharField(max_length = 1, choices=STATE, blank=True)
     medications      = models.ManyToManyField(Medication, blank=True)
     created          = models.DateTimeField(auto_now_add=True)
     updated          = models.DateTimeField(auto_now=True) 

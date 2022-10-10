@@ -7,6 +7,11 @@ import threading
 class MediacationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medication
+        fields = ('name', 'weight',)
+
+class MediacationBasicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medication
         fields = ('name', 'weight','code', 'image',)
 
 class DroneSerializer(serializers.ModelSerializer):
@@ -38,7 +43,7 @@ class DroneCreateSerializer(serializers.ModelSerializer):
         fields = ('serial_number', 'model',)
 
     def create(self, validated_data):
-        print(validated_data)
+        
         return super().create(validated_data)
 
 class DroneUpdateSerializer(serializers.ModelSerializer):
@@ -57,9 +62,11 @@ class DroneUpdateSerializer(serializers.ModelSerializer):
         }
 
     def update(self, instance, validated_data):
-        if instance.state == '1':
-            t = threading.Thread(target=change_state, args=(instance,))
-            t.start()
+        """This line should be commented when testing to avoid errors."""
+        # if instance.state == '1':
+        #     t = threading.Thread(target=change_state, args=(instance,))
+        #     t.start()
+        """--------------------------------------------------------"""
         return super().update(instance, validated_data)
 
 class DroneMedicationsItemsSerializer(serializers.ModelSerializer):

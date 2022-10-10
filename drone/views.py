@@ -7,7 +7,7 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, \
     DroneMedicationsItemsSerializer, DroneBasicSerializer, DroneBatterySerializer, MediacationSerializer\
-    ,DroneHistorySerializer    
+    ,DroneHistorySerializer, MediacationBasicSerializer    
 # Create your views here.
 
 
@@ -68,6 +68,7 @@ class LoadDroneAPIView(generics.UpdateAPIView):
 
 
     def put(self, request, pk=None):
+        print(request.data)
         cont=0
         datas = str(request.data)[1:-2].split(":")
         datas = datas[2].strip()
@@ -96,7 +97,7 @@ class LoadDroneAPIView(generics.UpdateAPIView):
             return Response(drone_serializer.errors, status = status.HTTP_400_BAD_REQUEST)
         return Response({'error':'This drone does not exist'}, status = status.HTTP_400_BAD_REQUEST)
         
-class LoadedMedicationItems(generics.RetrieveAPIView):
+class CheckItemsDroneAPIView(generics.RetrieveAPIView):
     serializer_class = DroneMedicationsItemsSerializer
 
     def get_queryset(self,pk):
@@ -104,7 +105,7 @@ class LoadedMedicationItems(generics.RetrieveAPIView):
             
     def get(self, request, pk=None):
         if self.get_queryset(pk).medications.count() == 0:
-            return Response({'message':'This Drone does not have any medical items.'}, status = status.HTTP_200_OK)
+            return Response({'error':'This Drone does not have any medical items.'}, status = status.HTTP_400_BAD_REQUEST)
 
         elif self.get_queryset(pk):
             drone_serializer = self.serializer_class(self.get_queryset(pk))
@@ -124,9 +125,10 @@ class CheckBaterryAPIView(generics.RetrieveAPIView):
         return self.get_serializer().Meta.model.objects.all()
 
 class MedicationCreateAPIView(generics.CreateAPIView):
-    serializer_class = MediacationSerializer
+    serializer_class = MediacationBasicSerializer
 
     def create(self, request):
+        
         for element in str(request.data['name']):
             if not element.isalnum() and not element=='-' and not element=='_':
                 return Response({'error':'The "name" field allows only alphanumeric characters, "-" or "_".'}, status=status.HTTP_400_BAD_REQUEST)
@@ -134,7 +136,7 @@ class MedicationCreateAPIView(generics.CreateAPIView):
 
         if str(request.data['code']).isupper():
             for element in str(request.data['code']):
-                print(element=='_')
+                
                 if not element.isalnum() and not element=='_':
                     return Response({'error':'The "code" field allows only uppercase letters, underscores and numbers.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
