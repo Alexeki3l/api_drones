@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 
 
 class Medication(models.Model):
@@ -19,7 +20,7 @@ class Drone(models.Model):
     MODEL            = (('1', 'Lightweigth'), ('2', 'Middleweigth'), ('3', 'Cruiserweigth'),('4', 'Heavyweigth'),)
     model            = models.CharField( max_length = 1, choices=MODEL)
     weight_limit     = models.IntegerField(null=True, blank=True)
-    battery_level = models.FloatField(default=100)
+    battery_level    = models.FloatField(default=100)
     STATE            = (('1', 'IDLE'),('2','LOADING'),('3','LOADED'),('4','DELIVERING'),('5','DELIVERED'),('6','RETURNING'),('6','RETURNING'),)
     state            = models.CharField(max_length = 1, choices=STATE)
     medications      = models.ManyToManyField(Medication, blank=True)
@@ -66,4 +67,27 @@ class Drone(models.Model):
                 return super(Drone,self).save(force_update=True)
 
 
+class DroneHistory(models.Model):
+    drones         = models.ForeignKey(Drone, on_delete=models.CASCADE)
+    state          = models.CharField(max_length = 15)
+    battery_level  = models.FloatField()
+    created        = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+            verbose_name = 'drone_history'
+            verbose_name_plural = 'drones_history'
+
+    def __str__(self):
+        return str(self.drones)
+
+    def create_drone_history(sender, instance, created, **kwargs):
+        if created:
+            DroneHistory.objects.create(drones = instance, state = instance.get_state_display(), battery_level = instance.battery_level)
+
+        else:
+            if not DroneHistory.objects.filter(drones = instance, state = instance.get_state_display(), battery_level = instance.battery_level, created = instance.updated).exists():
+                DroneHistory.objects.create(drones = instance, state = instance.get_state_display(), battery_level = instance.battery_level)
+            else:
+                pass
+
+    post_save.connect(create_drone_history, sender = Drone)

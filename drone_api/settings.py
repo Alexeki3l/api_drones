@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'drone_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'drone_api',
+        'NAME': 'api_drones',
         'USER': 'postgres',
         'PASSWORD': 'postgres',
         'HOST': '127.0.0.1',
@@ -140,3 +140,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Para guardar las imagenes ahi y se trabaje desde este directorio
 MEDIA_URL='/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR ,'media')
+
+# Duration of each drone's status
+TIME = 60

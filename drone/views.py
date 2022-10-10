@@ -1,10 +1,12 @@
 
+from itertools import count
 from django.shortcuts import render
 from .models import Drone, Medication
 from rest_framework.viewsets import GenericViewSet 
 from rest_framework import generics, status
 from rest_framework.response import Response
-from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, DroneMedicationsItemsSerializer, DroneBasicSerializer, DroneBatterySerializer
+from .serializers import DroneSerializer, DroneCreateSerializer, DroneUpdateSerializer, \
+    DroneMedicationsItemsSerializer, DroneBasicSerializer, DroneBatterySerializer, MediacationSerializer
 # Create your views here.
 
 
@@ -18,6 +20,9 @@ class DroneCreateAPIView(generics.CreateAPIView):
     serializer_class = DroneCreateSerializer
 
     def create(self, request):
+        if not str(request.data['serial_number']).isalnum():
+            return Response({'error':'This field only allows alpha-numeric characters.'}, status=status.HTTP_400_BAD_REQUEST)
+
         if len(str(request.data['serial_number'])) > 100:
             return Response({'message':'The number of characters for this field must be less than 100.'}, status=status.HTTP_401_UNAUTHORIZED)
         serializer = self.serializer_class(data = request.data)
@@ -116,3 +121,29 @@ class CheckBaterryAPIView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return self.get_serializer().Meta.model.objects.all()
+
+class MedicationCreateAPIView(generics.CreateAPIView):
+    serializer_class = MediacationSerializer
+
+    def create(self, request):
+        for element in str(request.data['name']):
+            if not element.isalnum() and not element=='-' and not element=='_':
+                return Response({'error':'The "name" field allows only alphanumeric characters, "-" or "_".'}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+        if str(request.data['code']).isupper():
+            for element in str(request.data['code']):
+                print(element=='_')
+                if not element.isalnum() and not element=='_':
+                    return Response({'error':'The "code" field allows only uppercase letters, underscores and numbers.'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error':'The "code" field allows only uppercase letters, underscores and numbers.'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not str(request.data['weight']).isnumeric:
+            return Response({'error':'The "weight" field allows only numbers.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message':'Medication successfully created'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

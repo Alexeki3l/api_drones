@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import DroneListAPIView, DroneCreateAPIView, LoadDroneAPIView, LoadedMedicationItems, DroneListAvailableAPIView, CheckBaterryAPIView
+from .views import DroneListAPIView, DroneCreateAPIView, LoadDroneAPIView, LoadedMedicationItems, DroneListAvailableAPIView, CheckBaterryAPIView\
+    ,MedicationCreateAPIView
 
 urlpatterns = [
     path('drones_all/', DroneListAPIView.as_view(), name='drones'),
@@ -9,5 +10,7 @@ urlpatterns = [
     path('check_items_drone/<int:pk>', LoadedMedicationItems.as_view(), name='check_items'),
     path('drones_available/', DroneListAvailableAPIView.as_view(), name='drones_available'),
     path('drone_check_baterry/<int:pk>', CheckBaterryAPIView.as_view(), name='drone_check_baterry'),
+
+    path('create_medication/', MedicationCreateAPIView.as_view(), name='create_medication'),
     
 ]
