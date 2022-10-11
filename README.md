@@ -1,4 +1,4 @@
-# Introduction
+# Introduction.
 
 As part of a task it was decided to create this REST API service that allows customers to communicate with drones. Specific communication with the drone is outside the scope of this task.
 
@@ -11,7 +11,7 @@ As part of a task it was decided to create this REST API service that allows cus
         - Check the battery level of a given drone;
         - Introduce a periodic task to check drone battery levels and create a history/event log for it.
 
-# Requirements
+# Requirements.
 
 The tools used to solve the problem are highlighted below. 
 
@@ -21,7 +21,7 @@ The tools used to solve the problem are highlighted below.
 
     - SQLite3
 
-# Installation of tools and dependencies:
+# Installation of tools and dependencies.
 
 Python: [Download](https://www.python.org/ftp/python/3.9.5/python-3.9.5-amd64.exe)
 
@@ -39,25 +39,35 @@ To install Django:
     2. pip install Pillow==9.0.0 [In order not to have problems with the images of the table medications]
     3. pip install djangorestframework [To work with the APIs in DJANGO]
     
-
-
-# Configure and get up and running.:
-
-After finishing the installation process. Configure the pgAdmin following these steps:
-
-- Create in the pgAdmin a Database named 'api_drones'. As shown in the image. 
-
-<p align="center">
-  <img src="https://github.com/Alexeki3l/api_drones/blob/master/tools/create_db.jpg?raw=true" width="350" title="hover text">
-  
-</p>
-
-- Right click on our new Database and select the 'Restore' option.
-
-<p align="center">
-  <img src="https://github.com/Alexeki3l/api_drones/blob/master/tools/restore_db.jpg?raw=true" width="350" title="hover text">
-</p>
-
-- When finished you will have the data loaded into your new Database. Next, open a terminal in the path where you have the project and type the following command:  
+After installing the above files. Just open the terminal on the path where the project is and run the following command:
 
         python manage.py runserver
+
+And if all goes well and open a tab in your browser and type the root address of the APIs. That would be:
+
+        http://http://localhost:8000/api/
+
+Perfect!.
+
+
+# About the code.
+## APIs:
+        dron_register/: Register a new drone to the system.
+        add_medications_drone/<int:pk>: Add medicines to a drone. The id of the drone must be specified.
+        check_items_drone/<int:pk>: Checks if a specific drone has medical items loaded on it.
+        drones_available/: Check the drones available for loading.
+        drone_check_baterry/<int:pk>: Check the battery level of a given drone.
+        drones/log: Displays a history of all drones with respect to their battery level and status change.
+
+## Tests:
+The unit tests performed on the system can be found in the file
+<code>tests.py</code>. To test or run such tests. You must stop the application in Django if you have it running. And run in console the following command:
+
+        python manage.py test
+
+NOTE: 
+
+    Before executing the above command. Go to the serializers.py file and comment the code line 66, 67 and 68.
+    Why? 
+    Because to create an effect where each drone changes state simultaneously without hindering the execution line of the project. I used a Python package where it creates multithreading. Which calls a function that only takes care of changing the states every so often.
+    So, if it is not commented out these lines when you test you will get an error. Saying that the database is being used.
