@@ -71,3 +71,6 @@ NOTE:
     Why? 
     Because to create an effect where each drone changes state simultaneously without hindering the execution line of the project. I used a Python package where it creates multithreading. Which calls a function that only takes care of changing the states every so often.
     So, if it is not commented out these lines when you test you will get an error. Saying that the database is being used.
+
+## Logs:
+![](https://github.com/Alexeki3l/api_drones/blob/master/media/logs.jpg?raw=true)
