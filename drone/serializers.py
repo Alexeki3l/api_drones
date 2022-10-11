@@ -63,9 +63,9 @@ class DroneUpdateSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """This line should be commented when testing to avoid errors."""
-        # if instance.state == '1':
-        #     t = threading.Thread(target=change_state, args=(instance,))
-        #     t.start()
+        if instance.state == '1':
+            t = threading.Thread(target=change_state, args=(instance,))
+            t.start()
         """--------------------------------------------------------"""
         return super().update(instance, validated_data)
 
